@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.io.OutputStream;
 
 public class Main {
   public static void main(String[] args){
@@ -8,7 +9,7 @@ public class Main {
     System.err.println("Logs from your program will appear here!");
 
     // Uncomment this block to pass the first stage
-    // 
+    //
     ServerSocket serverSocket = null;
     Socket clientSocket = null;
     int port = 9092;
@@ -19,6 +20,9 @@ public class Main {
       serverSocket.setReuseAddress(true);
       // Wait for connection from client.
       clientSocket = serverSocket.accept();
+      OutputStream stream = clientSocket.getOutputStream();
+      stream.write(new byte[] {0,0,0,5});
+      stream.write(new byte[] {0,0,0,7});
     } catch (IOException e) {
       System.out.println("IOException: " + e.getMessage());
     } finally {
