@@ -1,28 +1,46 @@
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.OutputStream;
 
 public class Main {
   public static void main(String[] args){
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.err.println("Logs from your program will appear here!");
 
-    // Uncomment this block to pass the first stage
-    //
     ServerSocket serverSocket = null;
     Socket clientSocket = null;
     int port = 9092;
     try {
       serverSocket = new ServerSocket(port);
-      // Since the tester restarts your program quite often, setting SO_REUSEADDR
-      // ensures that we don't run into 'Address already in use' errors
       serverSocket.setReuseAddress(true);
-      // Wait for connection from client.
+      System.out.println("Server started, waiting for client connection...");
       clientSocket = serverSocket.accept();
+      System.out.println("Client connected!");
+
+      InputStream is = clientSocket.getInputStream();
+
+      byte[] buffer = new byte[8];
+      byte[] requestApikey = new byte[2];
+      byte[] requestApiVersion = new byte[2];
+      byte[] correlationId = new byte[4];
+      int bytesRead = is.read(buffer,0,8);
+
+      if(bytesRead != 8){
+        System.out.println("bytes read "+bytesRead);
+        throw new IOException("Not enough data");
+      }
+      System.arraycopy(buffer, 0, requestApikey, 0, 2);
+      System.arraycopy(buffer, 2, requestApiVersion, 0, 2);
+      System.arraycopy(buffer, 4, correlationId, 0, 4);
+
+      System.out.println("Received data: " + bytesToHex(buffer));
+
+
       OutputStream stream = clientSocket.getOutputStream();
-      stream.write(new byte[] {0,0,0,5});
-      stream.write(new byte[] {0,0,0,7});
+//      byte[] data1 = new byte[] {0,0,0,5};
+//      byte[] data2 = new byte[] {0,0,0,7};
+      stream.write(correlationId);
+
+      stream.flush(); // Ensure data is sent immediately
     } catch (IOException e) {
       System.out.println("IOException: " + e.getMessage());
     } finally {
@@ -34,5 +52,13 @@ public class Main {
         System.out.println("IOException: " + e.getMessage());
       }
     }
+  }
+
+  private static String bytesToHex(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (byte b : bytes) {
+      sb.append(String.format("%02x", b));
+    }
+    return sb.toString();
   }
 }
