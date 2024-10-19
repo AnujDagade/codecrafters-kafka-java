@@ -38,6 +38,8 @@ public class Main {
       OutputStream stream = clientSocket.getOutputStream();
 //      byte[] data1 = new byte[] {0,0,0,5};
 //      byte[] data2 = new byte[] {0,0,0,7};
+      stream.write(requestApikey);
+      stream.write(requestApiVersion);
       stream.write(correlationId);
 
       stream.flush(); // Ensure data is sent immediately
