@@ -18,7 +18,7 @@ public class Main {
 
       InputStream is = clientSocket.getInputStream();
 
-      byte[] buffer = new byte[1024];
+      byte[] buffer = new byte[12];
       byte[] requestApikey = new byte[2];
       byte[] requestApiVersion = new byte[2];
       byte[] correlationId = new byte[4];
@@ -31,15 +31,19 @@ public class Main {
       System.arraycopy(buffer, 4, requestApikey, 0, 2);
       System.arraycopy(buffer, 6, requestApiVersion, 0, 2);
       System.arraycopy(buffer, 8, correlationId, 0, 4);
-
+      // 00 00 00 00 length
+      // 00 00
+      // 00 00
+      // 00 00 00 00 correlationId
       System.out.println("Received data: " + bytesToHex(buffer));
 
 
       OutputStream stream = clientSocket.getOutputStream();
 //      byte[] data1 = new byte[] {0,0,0,5};
 //      byte[] data2 = new byte[] {0,0,0,7};
-//      stream.write(requestApikey);
-//      stream.write(requestApiVersion);
+      stream.write(requestApikey);
+      stream.write(requestApiVersion);
+      System.out.println("correlationId: "+bytesToHex(correlationId));
       stream.write(correlationId);
 
     } catch (IOException e) {
