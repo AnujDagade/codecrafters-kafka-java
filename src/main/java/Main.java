@@ -22,15 +22,15 @@ public class Main {
       byte[] requestApikey = new byte[2];
       byte[] requestApiVersion = new byte[2];
       byte[] correlationId = new byte[4];
-      int bytesRead = is.read(buffer,0,8);
+      int bytesRead = is.read(buffer,0,12);
 
-      if(bytesRead != 8){
+      if(bytesRead != -1){
         System.out.println("bytes read "+bytesRead);
         throw new IOException("Not enough data");
       }
-      System.arraycopy(buffer, 0, requestApikey, 0, 2);
-      System.arraycopy(buffer, 2, requestApiVersion, 0, 2);
-      System.arraycopy(buffer, 4, correlationId, 0, 4);
+      System.arraycopy(buffer, 4, requestApikey, 0, 2);
+      System.arraycopy(buffer, 6, requestApiVersion, 0, 2);
+      System.arraycopy(buffer, 8, correlationId, 0, 4);
 
       System.out.println("Received data: " + bytesToHex(buffer));
 
@@ -38,11 +38,10 @@ public class Main {
       OutputStream stream = clientSocket.getOutputStream();
 //      byte[] data1 = new byte[] {0,0,0,5};
 //      byte[] data2 = new byte[] {0,0,0,7};
-      stream.write(requestApikey);
-      stream.write(requestApiVersion);
+//      stream.write(requestApikey);
+//      stream.write(requestApiVersion);
       stream.write(correlationId);
 
-      stream.flush(); // Ensure data is sent immediately
     } catch (IOException e) {
       System.out.println("IOException: " + e.getMessage());
     } finally {
