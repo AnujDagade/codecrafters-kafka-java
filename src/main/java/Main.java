@@ -18,11 +18,11 @@ public class Main {
 
       InputStream is = clientSocket.getInputStream();
 
-      byte[] buffer = new byte[8];
+      byte[] buffer = new byte[1024];
       byte[] requestApikey = new byte[2];
       byte[] requestApiVersion = new byte[2];
       byte[] correlationId = new byte[4];
-      int bytesRead = is.read(buffer,0,12);
+      int bytesRead = is.read(buffer);
 
       if(bytesRead != -1){
         System.out.println("bytes read "+bytesRead);
