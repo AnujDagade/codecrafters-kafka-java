@@ -24,7 +24,7 @@ public class Main {
       byte[] correlationId = new byte[4];
       int bytesRead = is.read(buffer);
 
-      if(bytesRead != -1){
+      if(bytesRead == -1){
         System.out.println("bytes read "+bytesRead);
         throw new IOException("Not enough data");
       }
